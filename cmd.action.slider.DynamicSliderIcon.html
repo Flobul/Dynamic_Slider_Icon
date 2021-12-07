@@ -8,7 +8,6 @@
   <style>
     .mode_lib {
       color: white;
-
       border: none;
       padding: 6px 8px 8px 8px;
       border-radius: 4px;
@@ -40,14 +39,12 @@
 
     .mode_lib_small {
       color: white;
-
       border: none;
       padding: 1px 1px 1px 1px;
       border-radius: 2px;
       box-shadow: 0px 0px 2px 2px rgba(255, 255, 255, 0.5);
       font: bold 12px Arial;
       vertical-align: middle;
-
     }
 
     .switch_3_ways_v2#uid#{
@@ -58,7 +55,6 @@
     position:relative;
     display:block;
     vertical-align: middle;
-
     }
 
     .switch2#uid#.blockX#uid#{
@@ -71,18 +67,20 @@
     color:white;
     vertical-align: middle;
     margin-right: 20px;
-
     }
 
     .selector#uid#{
  text-align:center;
     position:absolute;
     width:0;
-
     -webkit-transition: 100ms ease-out;
     -moz-transition: 100ms ease-out;
     transition: 100ms ease-out;
     color:white;
+    }
+
+    .cmd[data-cmd_id="#id#"] .timeCmd {
+      display: inline-block;
     }
   </style>
 
@@ -103,11 +101,9 @@
     function setTitleBoxColor(myTitleSelector, texte, bgColor, textFont, textColor) {
       myTitleSelector.innerHTML = texte;
       myTitleSelector.style.boxShadow = "0px 0px 1px 1px " + hexToRgbA(bgColor, 0.3);
-
       myTitleSelector.style.backgroundColor = bgColor;
       myTitleSelector.style.color = textColor;
       myTitleSelector.style.font = "bold " + textFont + "px Arial";
-
     }
 
     function setTitleBox(myTitleBox, texte, color, textFont) {
@@ -118,7 +114,6 @@
     }
 
     function setButton(myButton, myIcone, iconName, color, buttonSize, borderSize, iconSize, arrondi) {
-
       myButton.css("border", borderSize + "px solid " + color);
       if (arrondi == 1) {
         myButton.css("border-radius", buttonSize + "px");
@@ -133,7 +128,6 @@
       myIcone.css("color", color);
       myIcone.removeClass().addClass(iconName);
     }
-
 
     function addBlockButton(switch_3_ways_v2, numBlock, texte, textBoxSize, buttonSize, isSelector, textBoxHeight) {
       var divBlock = document.createElement('div');
@@ -150,9 +144,7 @@
       } else {
         divBlock.id = 'block' + numBlock + "#uid#";
         divBlock.className = "switch2#uid# blockX#uid#";
-
       }
-
       divTitle.style.paddingLeft = (buttonSize - textBoxSize) / 2 + "px";
       divTitleBox.id = "titlebox" + numBlock + "#uid#";
       divTitleBox.className = "mode_lib_small";
@@ -203,8 +195,6 @@
       var arrayEnable = enables.split(separateur);
       var arrayCmdId = cmdIds.split(separateur);
       var arrayTexteColor = textColors.split(separateur);
-
-
       var selectedValue = _options.display_value;
 
       for (let i = 0; i < nbBlock; i++) {
@@ -223,16 +213,26 @@
         if (arrayTexteColor[i] == null || arrayTexteColor[i] == "") {
           arrayTexteColor[i] = "#FFFFFF";
         }
-
         if (arrayCmdId[i] == null || arrayCmdId[i] == "") {
           arrayCmdId[i] = '#id#';
         }
 
         if (document.getElementById('block' + i + "#uid#") == null) {
-
           addBlockButton(switch_3_ways_v2, i, arrayTexte[i], textBoxSize, buttonSize, 0, textBoxHeight);
           setButton($("#button" + i + "-#uid# .button_thp"), $("#button" + i + "-#uid# .button_thp i"), arrayValue[i], 'grey', buttonSize, borderSize, iconSize, arrondi);
           setTitleBox(document.getElementById("titlebox" + i + "#uid#"), arrayTexte[i], 'grey', textFont);
+          $("#button" + i + "-#uid# .button_thp").mouseover(function() {
+            $("#button" + i + "-#uid# .button_thp").css("border", '3px solid ' + hexToRgbA(arrayColor[i], 0.3))
+            $("#button" + i + "-#uid# .button_thp").css("box-shadow", hexToRgbA(arrayColor[i], 0.3) + ' 0px 0px 2px 2px')
+            $("#icon" + i + "-#uid#").css("color", hexToRgbA(arrayColor[i], 0.3))
+            $("#titlebox" + i + "#uid#").css("backgroundColor", hexToRgbA(arrayColor[i], 0.3));
+          });
+          $("#button" + i + "-#uid# .button_thp").mouseout(function() {
+            $("#button" + i + "-#uid# .button_thp").css("border", '3px solid grey')
+            $("#button" + i + "-#uid# .button_thp").css("box-shadow", 'grey 0px 0px 2px 2px')
+            $("#icon" + i + "-#uid#").css("color", "grey")
+            $("#titlebox" + i + "#uid#").css("backgroundColor", '');
+          });
         }
       }
       if (document.getElementById("selector#uid#") == null) {
@@ -257,7 +257,6 @@
 
       if ('#vertical#' == "1") {
         $('.switch2#uid#').css('margin-bottom', distanceBlock + 'px');
-
         $('.switch2#uid#').css('width', blockSize + 'px');
         if (showText == 0) {
           selector.style.top = (parseInt(buttonSize) + parseInt(distanceBlock)) * selectedValue + "px";
@@ -287,9 +286,10 @@
         }
       }
 
+      $('.selector#uid#').attr('title', 'Date de valeur : ' + _options.valueDate + '</br>Date de collecte : ' + _options.collectDate);
+
       for (let i = 0; i < nbBlock; i++) {
         if (arrayEnable[i] == 1) {
-
           if (commande == 0 || arrayCmdId[i].toString() == '#id#')
             document.getElementById('block' + i + "#uid#").onclick = function() {
               jeedom.cmd.execute({
@@ -300,26 +300,27 @@
           else
             document.getElementById('block' + i + "#uid#").onclick = function() {
               jeedom.cmd.execute({
-                id: arrayCmdId[i].toString(),
-                value: (i.toString())
+                id: arrayCmdId[i].toString()
               });
               jeedom.cmd.execute({
                 id: '#id#',
                 value: (i.toString())
               });
             };
-
         }
       }
 
       if ('#time#' == 'duree') {
         jeedom.cmd.displayDuration(_options.valueDate, $('.cmd[data-cmd_id=#id#] .timeCmd'));
       } else if ('#time#' == 'date') {
-        var date = new Date(_options.valueDate);
+        _options.valueDate = _options.valueDate.replace(/\s/g, 'T'); //fix date soon not needed
+        const date = new Date(_options.valueDate);
         var format = $.datepicker.formatDate('D dd/mm', date);
         var time = "à " + date.getHours() + ":" + (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+
         $('.cmd[data-cmd_id=#id#] .timeCmd').html(format + '<br>' + time);
       } else if ('#time#' == 'heure') {
+        _options.valueDate = _options.valueDate.replace(/\s/g, 'T'); //fix date soon not needed
         var date = new Date(_options.valueDate);
         var time = "à " + date.getHours() + ":" + (date.getMinutes() < 10 ? '0' : '') + date.getMinutes() + ":" + (date.getSeconds() < 10 ? '0' : '') + date.getSeconds() + "";
         $('.cmd[data-cmd_id=#id#] .timeCmd').html(time);
